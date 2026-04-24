@@ -33,10 +33,10 @@ upload() {
 }
 
 APP_JSON=$(upload "https://api-cloud.browserstack.com/app-automate/upload" "$APP_APK" "app APK")
-TEST_JSON=$(upload "https://api-cloud.browserstack.com/app-automate/detox-android/get-test-suites" "$TEST_APK" "Detox test APK")
+TEST_JSON=$(upload "https://api-cloud.browserstack.com/app-automate/upload" "$TEST_APK" "Detox test APK")
 
 APP_URL=$(printf '%s' "$APP_JSON" | python3 -c "import sys, json; print(json.load(sys.stdin)['app_url'])")
-TEST_URL=$(printf '%s' "$TEST_JSON" | python3 -c "import sys, json; print(json.load(sys.stdin).get('test_suite_url') or json.load(sys.stdin)['app_url'])")
+TEST_URL=$(printf '%s' "$TEST_JSON" | python3 -c "import sys, json; print(json.load(sys.stdin)['app_url'])")
 
 echo "APP_URL=$APP_URL"
 echo "TEST_URL=$TEST_URL"

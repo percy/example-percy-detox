@@ -20,7 +20,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.25.3",
     "@percy/cli": "^1.30.9",
-    "@percy/detox": "^0.1.0-alpha.0",
+    "@percy/detox": "github:percy/percy-detox",
     "@react-native/babel-preset": "0.75.4",
     "@react-native/metro-config": "0.75.4",
     "@types/jest": "^29.5.12",
