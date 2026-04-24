@@ -1,0 +1,17 @@
+node_modules/
+coverage/
+.nyc_output/
+*.log
+.DS_Store
+
+# RN / Native build artifacts
+ios/Pods/
+ios/build/
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+
+# Detox artifacts
+e2e/artifacts/
+.detoxrc.local.js
