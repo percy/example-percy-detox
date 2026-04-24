@@ -1,6 +1,5 @@
 buildscript {
-    apply from: '../../../detox/android/rninfo.gradle'
-
+    // rninfo.gradle was Wix-Detox-monorepo-internal; not referenced here.
     ext {
         kotlinVersion = '2.1.20'
         buildToolsVersion = '36.0.0'
