@@ -1,12 +1,16 @@
-name: Test
+name: Validate
 on: [push, pull_request]
 jobs:
-  lint:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install
-      - run: npx jest --listTests || echo "Jest listTests (sanity)"
+      - name: package.json parses
+        run: node -e "require('./package.json')"
+      - name: detox config parses
+        run: node -e "require('./detox.config.js')"
+      - name: Shell scripts are executable
+        run: test -x scripts/upload-apk-to-browserstack.sh

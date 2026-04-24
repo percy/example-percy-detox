@@ -1,0 +1,73 @@
+# Real end-to-end: build real APKs → upload to BrowserStack → run Detox
+# tests on a real BrowserStack Android device with @percy/detox capturing
+# real screenshots. Produces a real Percy build against the configured
+# PERCY_TOKEN (App-project token).
+name: Detox × BrowserStack (Android)
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_name:
+        description: BS build name (shown on BrowserStack dashboard)
+        required: false
+        default: ''
+
+concurrency:
+  group: detox-bs-android-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+      BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+      BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+      BS_SESSION_NAME: percy-detox-smoke-${{ github.run_number }}
+      BS_BUILD_NAME: ${{ inputs.build_name || format('percy-detox-{0}', github.run_number) }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-34 build-tools;34.0.0'
+
+      - name: Install npm dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Install detox-cli
+        run: npm install -g detox-cli
+
+      - name: Build Android APKs
+        run: |
+          cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug --no-daemon
+        env:
+          JAVA_HOME: ${{ env.JAVA_HOME_17_X64 }}
+
+      - name: Upload APKs to BrowserStack
+        run: bash scripts/upload-apk-to-browserstack.sh
+
+      - name: Generate cloud-config override
+        run: node scripts/write-cloud-config.js
+
+      - name: Run Detox against BrowserStack + Percy
+        run: |
+          npx percy app:exec -- \
+            detox test \
+            --configuration android.cloud.debug \
+            --config-path detox.config.cloud.js \
+            --headless
+        env:
+          CI: 'true'
