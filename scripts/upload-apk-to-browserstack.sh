@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
-# Upload the app APK and Detox test APK to BrowserStack App Automate and
-# emit a `.detoxrc.cloud.json` override that references the returned bs://
-# URLs. Called from CI after `detox build --configuration android.emu.debug`.
+# Upload the app APK and Detox test APK to BrowserStack App Automate via
+# the dedicated Detox v2 endpoints, and emit bs:// URLs that can be used in
+# `.detoxrc.js`'s `android.cloud` app config (`app` + `appClient`).
+#
+# Endpoints (per BS Detox REST API v2):
+#   app APK: POST https://api-cloud.browserstack.com/app-automate/detox/v2/android/app
+#   test APK: POST https://api-cloud.browserstack.com/app-automate/detox/v2/android/app-client
 #
 # Requires: BROWSERSTACK_USERNAME, BROWSERSTACK_ACCESS_KEY
 set -euo pipefail
@@ -32,16 +36,15 @@ upload() {
     "$endpoint"
 }
 
-APP_JSON=$(upload "https://api-cloud.browserstack.com/app-automate/upload" "$APP_APK" "app APK")
-TEST_JSON=$(upload "https://api-cloud.browserstack.com/app-automate/upload" "$TEST_APK" "Detox test APK")
+APP_JSON=$(upload "https://api-cloud.browserstack.com/app-automate/detox/v2/android/app" "$APP_APK" "app APK")
+TEST_JSON=$(upload "https://api-cloud.browserstack.com/app-automate/detox/v2/android/app-client" "$TEST_APK" "Detox test APK")
 
-APP_URL=$(printf '%s' "$APP_JSON" | python3 -c "import sys, json; print(json.load(sys.stdin)['app_url'])")
-TEST_URL=$(printf '%s' "$TEST_JSON" | python3 -c "import sys, json; print(json.load(sys.stdin)['app_url'])")
+APP_URL=$(printf '%s' "$APP_JSON" | python3 -c "import sys, json; d=json.load(sys.stdin); print(d.get('app_url') or d.get('url'))")
+TEST_URL=$(printf '%s' "$TEST_JSON" | python3 -c "import sys, json; d=json.load(sys.stdin); print(d.get('app_client_url') or d.get('app_url') or d.get('url'))")
 
 echo "APP_URL=$APP_URL"
 echo "TEST_URL=$TEST_URL"
 
-# Emit env values for subsequent CI steps
 {
   echo "BS_APP_URL=$APP_URL"
   echo "BS_TEST_URL=$TEST_URL"

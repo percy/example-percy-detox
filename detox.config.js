@@ -27,10 +27,11 @@ module.exports = {
       reversePorts: [8081]
     },
     'android.cloud': {
-      type: 'android.apk',
-      binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
-      testBinaryPath:
-        'android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk'
+      type: 'android.cloud',
+      // `app` and `appClient` are bs:// URLs injected by
+      // scripts/write-cloud-config.js after upload to BrowserStack.
+      app: process.env.BS_APP_URL || 'bs://PLACEHOLDER_APP',
+      appClient: process.env.BS_TEST_URL || 'bs://PLACEHOLDER_TEST'
     }
   },
   devices: {
@@ -43,7 +44,17 @@ module.exports = {
     },
     'browserstack.android': {
       type: 'android.cloud',
-      device: { udid: 'BROWSERSTACK' },
+      device: { name: 'Samsung Galaxy S22 Ultra', osVersion: '12.0' }
+    }
+  },
+  configurations: {
+    'android.emu.debug': {
+      device: 'emulator',
+      app: 'android.debug'
+    },
+    'android.cloud.debug': {
+      device: 'browserstack.android',
+      app: 'android.cloud',
       cloudAuthentication: {
         username: process.env.BROWSERSTACK_USERNAME,
         accessKey: process.env.BROWSERSTACK_ACCESS_KEY
@@ -54,16 +65,6 @@ module.exports = {
         build: process.env.BS_BUILD_NAME || 'example-percy-detox-local',
         project: 'example-percy-detox'
       }
-    }
-  },
-  configurations: {
-    'android.emu.debug': {
-      device: 'emulator',
-      app: 'android.debug'
-    },
-    'android.cloud.debug': {
-      device: 'browserstack.android',
-      app: 'android.cloud'
     }
   }
 };

@@ -1,45 +1,34 @@
 buildscript {
-    // rninfo.gradle was Wix-Detox-monorepo-internal; not referenced here.
     ext {
-        kotlinVersion = '2.1.20'
-        buildToolsVersion = '36.0.0'
-        compileSdkVersion = 36
-        targetSdkVersion = 36
-        ndkVersion = "27.1.12297006"
-        minSdkVersion = 26
+        buildToolsVersion = "34.0.0"
+        minSdkVersion = 24
+        compileSdkVersion = 34
+        targetSdkVersion = 34
+        ndkVersion = "26.1.10909125"
+        kotlinVersion = "1.9.22"
     }
-
     repositories {
-        mavenCentral()
         google()
+        mavenCentral()
     }
-
     dependencies {
-        classpath "com.android.tools.build:gradle"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath "com.facebook.react:react-native-gradle-plugin"
+        classpath("com.android.tools.build:gradle")
+        classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
     }
 }
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        maven {
-            url "$rootDir/../node_modules/detox/Detox-android"
-        }
-    }
-}
 
-subprojects {
-    // Apply common configurations to all sub-projects
-    afterEvaluate { project ->
-        if (project.hasProperty("android")) {
-            project.android {
-                buildToolsVersion = rootProject.ext.buildToolsVersion
+apply plugin: "com.facebook.react.rootproject"
+
+subprojects { subproject ->
+    if (subproject.name == 'detox') {
+        subproject.afterEvaluate {
+            subproject.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+                kotlinOptions {
+                    freeCompilerArgs += ['-opt-in=kotlin.ExperimentalStdlibApi', '-opt-in=kotlin.RequiresOptIn']
+                }
             }
         }
     }
 }
-
-apply plugin: "com.facebook.react.rootproject"

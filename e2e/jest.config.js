@@ -6,7 +6,7 @@ module.exports = {
   testEnvironment: "detox/runners/jest/testEnvironment",
   setupFilesAfterEnv: ["./setup.ts"],
   testRunner: "jest-circus/runner",
-  testTimeout: 120000,
+  testTimeout: 600000,
   testMatch: ["**/*.test.ts"],
   transform: {
     "\\.tsx?$": "ts-jest"

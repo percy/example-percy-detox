@@ -2,33 +2,44 @@
   "name": "example-percy-detox",
   "version": "0.1.0",
   "private": true,
-  "description": "Real RN + Detox todo-style example wired to @percy/detox for BrowserStack App Automate visual testing",
+  "description": "Real RN + Detox example wired to @percy/detox for BrowserStack App Automate visual testing",
   "license": "MIT",
   "scripts": {
+    "android": "react-native run-android",
     "start": "react-native start",
     "build:android": "detox build --configuration android.emu.debug",
-    "test:android": "detox test --configuration android.emu.debug",
     "build:cloud": "detox build --configuration android.cloud.debug",
-    "test:cloud": "detox test --configuration android.cloud.debug",
-    "e2e:cloud": "percy app:exec -- detox test --configuration android.cloud.debug"
+    "test:android": "detox test --configuration android.emu.debug",
+    "test:cloud": "detox test --configuration android.cloud.debug"
   },
   "dependencies": {
-    "react": "18.3.1",
-    "react-native": "0.75.4",
-    "tslib": "^2.8.1"
+    "react": "18.2.0",
+    "react-native": "0.74.5"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.25.3",
+    "@babel/core": "^7.20.0",
+    "@babel/preset-env": "^7.20.0",
+    "@babel/runtime": "^7.20.0",
     "@percy/cli": "^1.30.9",
     "@percy/detox": "github:percy/percy-detox",
-    "@react-native/babel-preset": "0.75.4",
-    "@react-native/metro-config": "0.75.4",
+    "@react-native/babel-preset": "0.74.87",
+    "@react-native/eslint-config": "0.74.87",
+    "@react-native/metro-config": "0.74.87",
+    "@react-native/typescript-config": "0.74.87",
     "@types/jest": "^29.5.12",
-    "@types/react": "^18.3.3",
-    "detox": "^20.32.0",
-    "jest": "^29.7.0",
+    "@types/react": "^18.2.6",
+    "@types/react-test-renderer": "^18.0.0",
+    "babel-jest": "^29.6.3",
+    "detox": "npm:@browserstack/detox@20.38.0-cloud.1",
+    "eslint": "^8.19.0",
+    "jest": "^29.6.3",
     "jest-circus": "^29.7.0",
+    "prettier": "2.8.8",
+    "react-test-renderer": "18.2.0",
     "ts-jest": "^29.1.5",
-    "typescript": "^5.5.4"
+    "typescript": "5.0.4"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

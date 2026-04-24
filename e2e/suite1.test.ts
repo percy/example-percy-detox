@@ -4,9 +4,8 @@ import { by, device, element, expect } from 'detox';
 const percyScreenshot = require('@percy/detox');
 
 describe('Percy × Detox — welcome flow', () => {
-  beforeAll(async () => {
-    await device.relaunchApp();
-  });
+  // Note: setup.ts already launches the app in its beforeAll.
+  // Avoid double-launch to prevent "multiple simultaneous interactions" errors.
 
   it('welcome screen renders', async () => {
     await expect(element(by.id('welcome'))).toBeVisible();
@@ -24,7 +23,7 @@ describe('Percy × Detox — welcome flow', () => {
   });
 
   it('element-level screenshot of welcome view', async () => {
-    await device.relaunchApp();
+    await device.reloadReactNative();
     const welcome = element(by.id('welcome'));
     await expect(welcome).toBeVisible();
     await percyScreenshot(welcome, 'Element | welcome', {
